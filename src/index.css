@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.active {
+  color: #f7a721;
+  /* Couleur de texte pour le lien actif */
+}
+
+:root {
+  --container-width-lg: 88%;
+  --container-width-md: 85%;
+  --container-width-sm: 88%;
+}
+
+
+
+.container {
+  width: var(--container-width-lg);
+  /* max-width: 1200px; */
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .container {
+    width: var(--container-width-sm);
+  }
+}
+
+/* Pour les écrans moyens */
+@media (min-width: 601px) and (max-width: 900px) {
+  .container {
+    width: var(--container-width-md);
+  }
+}
+
+/* Pour les écrans plus larges */
+@media (min-width: 901px) {
+  .container {
+    width: var(--container-width-lg);
+  }
+}
+
+
+
+.animate {
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  -o-transition: all .3s ease-in-out;
+  -ms-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}

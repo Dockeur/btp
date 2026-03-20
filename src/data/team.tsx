@@ -1,0 +1,78 @@
+
+
+export default function team() {
+  return [
+    {
+      id: 1,
+      Nom: "Patrick NGUEDA NGUINTO ",
+      Profession: " Ingénieur polytechnicien - Génie Logiciel",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 2,
+      Nom: "Patrick",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 3,
+      Nom: "Patrick ",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 4,
+      Nom: "Patrick",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 5,
+      Nom: "Patrick",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 6,
+      Nom: "Patrick",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 7,
+      Nom: "Patrick",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+    {
+      id: 8,
+      Nom: "Patrick",
+      Profession: " ingenieur polytechnicien",
+      image: "/src/assets/notreEquipe/patrick.jpg ",
+      alt: "image patrick",
+      poste: "chef du departement informatique",
+      pageUrl: "#!",
+    },
+  ];
+}
