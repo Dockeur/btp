@@ -16,7 +16,8 @@ const resources = {
                 help: "Aide",
                 login: "Connexion",
                 register: "Inscription",
-                logout: "Déconnexion"
+                logout: "Déconnexion",
+                com: "Commander"
             },
 
                header: {
@@ -39,7 +40,8 @@ const resources = {
                 help: "Help",
                 login: "Login",
                 register: "Register",
-                logout: "Logout"
+                logout: "Logout",
+                com: "Commander"
             },
 
                header: {

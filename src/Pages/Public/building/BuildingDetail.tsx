@@ -7,7 +7,7 @@ import {
 } from "react-icons/fa";
 import { MdApartment } from "react-icons/md";
 import { HiOutlineDocumentText, HiLocationMarker } from "react-icons/hi";
-import { Building2, Layers, Ruler, DollarSign } from "lucide-react";
+import { Building2, Layers, Ruler, DollarSign, TrendingUp, TrendingDown, BarChart2 } from "lucide-react";
 import { FiArrowLeft, FiMaximize2, FiX } from "react-icons/fi";
 import { BiCheckCircle, BiXCircle } from "react-icons/bi";
 import { ProductType } from "@/types";
@@ -56,6 +56,48 @@ const FinanceRow = ({ label, value }: { label: string; value: string }) => (
     <span className="text-sm font-bold text-gray-900">{value}</span>
   </div>
 );
+
+/* ── Carte métrique investissement ── */
+const InvestCard = ({
+  label,
+  value,
+  badge,
+  color = "gray",
+  icon,
+}: {
+  label: string;
+  value: string;
+  badge?: string;
+  color?: "gray" | "emerald" | "red" | "blue" | "primary";
+  icon?: React.ReactNode;
+}) => {
+  const bg: Record<string, string> = {
+    gray: "bg-gray-50 border-gray-100",
+    emerald: "bg-emerald-50 border-emerald-100",
+    red: "bg-red-50 border-red-100",
+    blue: "bg-blue-50 border-blue-100",
+    primary: "bg-Cprimary/5 border-Cprimary/20",
+  };
+  const badgeColor: Record<string, string> = {
+    gray: "text-gray-500",
+    emerald: "text-emerald-600",
+    red: "text-red-500",
+    blue: "text-blue-600",
+    primary: "text-Cprimary",
+  };
+  return (
+    <div className={`${bg[color]} border rounded-xl p-4`}>
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-xs text-gray-400">{label}</p>
+        {icon && <span className="text-gray-300">{icon}</span>}
+      </div>
+      <p className="text-lg font-black text-gray-900">{value}</p>
+      {badge && (
+        <p className={`text-xs font-semibold mt-1 ${badgeColor[color]}`}>{badge}</p>
+      )}
+    </div>
+  );
+};
 
 
 const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
@@ -145,10 +187,6 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
     }
   };
 
-  // const waLink = `https://wa.me/237686741680?text=${encodeURIComponent(
-  //   `Bonjour! Je suis interesse par l'immeuble ${property?.reference} - ${productable?.title}`
-  // )}`;
-
   const tabs = [
     { id: "details", label: "Details", icon: HiOutlineDocumentText },
     { id: "parts", label: `Parties (${buildingParts.length})`, icon: Building2 },
@@ -159,9 +197,14 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
     low: "Standing Faible", medium: "Standing Moyen", high: "Standing Eleve",
   };
 
+  /* helpers investissement */
+  const inv = productable?.investment;
+  const hasInvestment = !!inv;
+
   return (
     <div className="min-h-screen bg-gray-50">
 
+      {/* ── Navbar ── */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -192,7 +235,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
         </div>
       </div>
 
-
+      {/* ── Hero ── */}
       <div className="bg-Cprimary py-10 px-4">
         <div className="container mx-auto">
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -233,13 +276,14 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
         </div>
       </div>
 
-
-      <div className=" container mx-auto    py-10">
+      {/* ── Body ── */}
+      <div className="container mx-auto py-10">
         <div className="grid lg:grid-cols-3 gap-8">
 
+          {/* ── Colonne principale ── */}
           <div className="lg:col-span-2 space-y-6">
 
-
+            {/* Galerie */}
             {images.length > 0 && (
               <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
                 <div className="relative h-80 lg:h-[420px] overflow-hidden group cursor-zoom-in" onClick={() => setIsLightboxOpen(true)}>
@@ -270,8 +314,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                       <button
                         key={i}
                         onClick={() => setSelectedImage(i)}
-                        className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === i ? "border-Cprimary" : "border-transparent opacity-50 hover:opacity-100"
-                          }`}
+                        className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === i ? "border-Cprimary" : "border-transparent opacity-50 hover:opacity-100"}`}
                       >
                         <img src={img} alt="" className="w-full h-full object-cover" />
                       </button>
@@ -281,17 +324,14 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
               </div>
             )}
 
-
+            {/* Onglets */}
             <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
               <div className="flex border-b border-gray-100">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`relative flex-1 py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all ${activeTab === tab.id
-                        ? "text-Cprimary"
-                        : "text-gray-400 hover:text-gray-700"
-                      }`}
+                    className={`relative flex-1 py-4 flex items-center justify-center gap-2 text-sm font-semibold transition-all ${activeTab === tab.id ? "text-Cprimary" : "text-gray-400 hover:text-gray-700"}`}
                   >
                     <tab.icon className="w-4 h-4" />
                     <span className="hidden sm:inline">{tab.label}</span>
@@ -304,9 +344,11 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
 
               <div className="p-6 lg:p-8">
 
-
+                {/* ── Tab Détails ── */}
                 {activeTab === "details" && (
                   <div className="space-y-8">
+
+                    {/* Description */}
                     <div>
                       <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Presentation</h3>
                       <p className="text-sm text-gray-700 leading-relaxed">
@@ -314,6 +356,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                       </p>
                     </div>
 
+                    {/* Surfaces */}
                     {(productable?.build_area || productable?.field_area || productable?.ground_floor_area) && (
                       <div>
                         <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Surfaces</h3>
@@ -340,6 +383,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                       </div>
                     )}
 
+                    {/* Programme global */}
                     {productable?.overall_program?.length > 0 && (
                       <div>
                         <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Programme global</h3>
@@ -354,28 +398,100 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                       </div>
                     )}
 
-                    {productable?.investment && (
+                    {/* ══════════════════════════════════════════
+                        SECTION INVESTISSEMENT — COMPLÈTE
+                    ══════════════════════════════════════════ */}
+                    {hasInvestment && (
                       <div>
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Investissement</h3>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          {[
-                            { label: "Investissement total", value: fmt(productable.investment.investment_cost || 0) },
-                            { label: "Revenus annuels", value: `${(productable.investment.total_income?.mount_income || 0).toLocaleString()} FCFA` },
-                            { label: "Croissance annuelle", value: `${productable.investment.annual_investment_growth}%` },
-                            { label: "Retour sur investissement", value: productable.investment.return_on_investment_period || "N/A" },
-                          ].map((item) => (
-                            <div key={item.label} className="bg-gray-50 rounded-xl p-4">
-                              <p className="text-xs text-gray-400 mb-1">{item.label}</p>
-                              <p className="text-lg font-black text-gray-900">{item.value}</p>
-                            </div>
-                          ))}
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+                          Investissement
+                        </h3>
+
+                        {/* Coût principal */}
+                        <div className="bg-Cprimary/5 border border-Cprimary/20 rounded-2xl p-5 mb-5 flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-gray-400 mb-1">Coût d'investissement total</p>
+                            <p className="text-2xl font-black text-Cprimary">
+                              {fmt(inv.investment_cost || 0)}
+                            </p>
+                          </div>
+                          <DollarSign className="w-9 h-9 text-Cprimary/25" />
+                        </div>
+
+                        {/* Revenus */}
+                        <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+                          Revenus
+                        </p>
+                        <div className="grid grid-cols-2 gap-3 mb-5">
+                          <InvestCard
+                            color="emerald"
+                            label="Revenus annuels"
+                            value={inv.total_income?.mount_income > 0 ? fmt(inv.total_income.mount_income) : "—"}
+                            badge={inv.total_income?.percent > 0 ? `${inv.total_income.percent}% du capital` : undefined}
+                            icon={<TrendingUp className="w-4 h-4" />}
+                          />
+                          <InvestCard
+                            color="emerald"
+                            label="Croissance valeur marché"
+                            value={inv.growth_in_market_value > 0 ? fmt(inv.growth_in_market_value) : "—"}
+                            icon={<TrendingUp className="w-4 h-4" />}
+                          />
+                        </div>
+
+                        {/* Charges & Marges */}
+                        <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+                          Charges & Marges
+                        </p>
+                        <div className="grid grid-cols-2 gap-3 mb-5">
+                          <InvestCard
+                            color="red"
+                            label="Charges annuelles"
+                            value={inv.annual_expense > 0 ? fmt(inv.annual_expense) : "—"}
+                            icon={<TrendingDown className="w-4 h-4" />}
+                          />
+                          <InvestCard
+                            color="blue"
+                            label="Marge nette d'exploitation"
+                            value={
+                              inv.annual_net_operating_margin?.mount_margin > 0
+                                ? fmt(inv.annual_net_operating_margin.mount_margin)
+                                : "—"
+                            }
+                            badge={
+                              inv.annual_net_operating_margin?.percent_margin > 0
+                                ? `${inv.annual_net_operating_margin.percent_margin}% de marge`
+                                : undefined
+                            }
+                            icon={<BarChart2 className="w-4 h-4" />}
+                          />
+                        </div>
+
+                        {/* Performance */}
+                        <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+                          Performance
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <InvestCard
+                            color="gray"
+                            label="Croissance annuelle"
+                            value={
+                              inv.annual_investment_growth > 0
+                                ? `${inv.annual_investment_growth}%`
+                                : "—"
+                            }
+                          />
+                          <InvestCard
+                            color="gray"
+                            label="Période de retour"
+                            value={inv.return_on_investment_period || "—"}
+                          />
                         </div>
                       </div>
                     )}
                   </div>
                 )}
 
-
+                {/* ── Tab Parties ── */}
                 {activeTab === "parts" && buildingParts.length > 0 && (
                   <div className="space-y-5">
                     {buildingParts.map((part: any, i: number) => (
@@ -407,7 +523,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                   </div>
                 )}
 
-
+                {/* ── Tab Finances (coûts construction) ── */}
                 {activeTab === "finances" && productable?.building_finances?.length > 0 && (
                   <div className="space-y-5">
                     {productable.building_finances
@@ -436,7 +552,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
               </div>
             </div>
 
-
+            {/* Cartes map */}
             {Array.isArray(property?.proposed_products) && property.proposed_products.map((item: any) => (
               <div key={item.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
                 <div className="relative h-72">
@@ -471,11 +587,11 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
             ))}
           </div>
 
-
+          {/* ── Sidebar ── */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-4">
 
-
+              {/* Prix */}
               <div className="bg-Csecondary1 rounded-2xl p-6 shadow-sm">
                 <p className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-1">
                   {property?.for_rent ? "Prix de location" : "Prix total"}
@@ -489,9 +605,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                     <p className="text-lg font-bold text-white">{fmt(Number(productable.estimated_payment))}</p>
                   </div>
                 )}
-
                 <div className="mt-5 space-y-2">
-
                   <button
                     onClick={() => {
                       const msg = `Bonjour! Je souhaite commander l'immeuble ${property?.reference} - ${productable?.title}`;
@@ -505,7 +619,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                 </div>
               </div>
 
-
+              {/* Équipements */}
               <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Equipements</h4>
                 <EquipRow icon={<FaSwimmingPool className="w-3.5 h-3.5 text-blue-400" />} label="Piscine" value={!!productable?.has_pool} />
@@ -513,7 +627,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
                 <EquipRow icon={<FaBuilding className="w-3.5 h-3.5 text-Cprimary" />} label="Niveaux" value={productable?.levels || 0} />
               </div>
 
-
+              {/* Contact */}
               <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Besoin d'aide ?</h4>
                 <div className="space-y-3">
@@ -543,7 +657,7 @@ const BuildingDetail: React.FC<Props> = ({ immeuble }) => {
         </div>
       </div>
 
-
+      {/* ── Lightbox ── */}
       {isLightboxOpen && (
         <div
           className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"

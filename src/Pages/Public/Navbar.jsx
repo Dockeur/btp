@@ -63,6 +63,7 @@ const Navbar = () => {
     { link: t("nav.home"),     path: "home" },
     { link: t("nav.about"),    path: "about" },
     { link: t("nav.lands"),    path: "land" },
+    { link: t("nav.com"),    path: "commande" },
     { link: t("nav.buildings"), subMenu: <SubMenu key="maisonDropdown" /> },
     { link: t("nav.contact"),  path: "contact" },
   ];
