@@ -14,8 +14,8 @@ import {
 const AddLandModal = ({ modalState, setModalState, refresh, setRefresh }: any) => {
 
     const [loading, setLoading] = useState(false);
-    const [previewImages, setPreviewImages] = useState<any[]>([]); // PREVIEW IMAGES
-    const [rawImages, setRawImages] = useState<File[]>([]); // FILES TO SEND
+    const [previewImages, setPreviewImages] = useState<any[]>([]); 
+    const [rawImages, setRawImages] = useState<File[]>([]); 
 
     const { handleError, getError } = useAuth();
 
@@ -31,7 +31,7 @@ const AddLandModal = ({ modalState, setModalState, refresh, setRefresh }: any) =
         { value: 'Cameroun', label: 'Cameroun' },
     ];
 
-    // 🔥 Lorsqu’on sélectionne des images
+   
     const handleImageChange = (e: any) => {
         const files = Array.from(e.target.files);
 
@@ -44,7 +44,7 @@ const AddLandModal = ({ modalState, setModalState, refresh, setRefresh }: any) =
         setRawImages((prev) => [...prev, ...files]);
     };
 
-    // ❌ Supprimer une image avant upload
+    
     const removeImage = (index: number) => {
         const newPreview = [...previewImages];
         const newRaw = [...rawImages];
@@ -61,23 +61,23 @@ const AddLandModal = ({ modalState, setModalState, refresh, setRefresh }: any) =
             setLoading(true);
             const formData = new FormData();
 
-            // 🟡 Ajouter les images finales
+            
             rawImages.forEach((file) => {
                 formData.append("images[]", file);
             });
 
 
-            const coordinateFile = data.coordinate_link?.[0]; // On prend le premier fichier du FileList
+            const coordinateFile = data.coordinate_link?.[0];
             if (coordinateFile) {
-                // Le nom de l'API est maintenant 'coordinate_file' (ou 'file', j'ai utilisé `coordinate_file` pour la clarté)
+              
                 formData.append('file', coordinateFile); 
             }
-            // Autres champs
+        
             formData.append('country', data.country);
             formData.append('land_title', data.land_title);
             formData.append('area', String(data.area));
             formData.append('relief', data.relief);
-            // formData.append('file', data.coordinate_link);
+          
             formData.append('description', data.description);
             formData.append('city', data.city);
             formData.append('street', data.street);

@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, FileInput, Input, Select, Textarea } from 'rizzui';
 import { toast } from 'react-toastify';
-
-// Import des services API
-import { createProperty, getProperties } from 'src/services/propertyService';
+import { createProperty } from 'src/services/propertyService';
 
 const Title = ({ title, links }) => (
     <div className="w-full mb-4">
@@ -24,8 +22,6 @@ const Title = ({ title, links }) => (
 const AddProperty = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [lands, setLands] = useState([]);
-    const [loadingLands, setLoadingLands] = useState(true);
 
     const types = [
         { label: "Immeuble", value: "building" },
@@ -45,7 +41,6 @@ const AddProperty = () => {
 
     const { register, reset, control, handleSubmit, formState: { errors }, watch } = useForm({
         defaultValues: {
-            proposed_product_ids: [],
             type: '',
             has_pool: false,
             has_garden: false,
@@ -54,42 +49,14 @@ const AddProperty = () => {
 
     const selectedType = watch('type');
 
-    useEffect(() => {
-        const fetchLands = async () => {
-            try {
-                const response = await getProperties();
-                const formattedLands = response.data
-                    ?.filter(p => p.type === 'land')
-                    .map(land => ({
-                        value: land.id.toString(),
-                        label: `${land.title} - ${land.field_area}m²`
-                    })) || [];
-                setLands(formattedLands);
-            } catch (error) {
-                console.error('Erreur lors du chargement des terrains:', error);
-                toast.error('Impossible de charger les terrains');
-            } finally {
-                setLoadingLands(false);
-            }
-        };
-
-        fetchLands();
-    }, []);
-
     const onSubmit = async (data, event) => {
-        if (event) {
-            event.preventDefault();
-        }
-
-        console.log('🚀 onSubmit APPELÉ');
-        console.log('📦 Data reçue:', data);
+        if (event) event.preventDefault();
 
         try {
             setLoading(true);
 
             const formData = new FormData();
 
-            // Champs texte
             if (data.title) formData.append('title', data.title);
             if (data.type_name) formData.append('type_name', data.type_name);
             if (data.description) formData.append('description', data.description);
@@ -99,7 +66,6 @@ const AddProperty = () => {
             if (data.street) formData.append('street', data.street);
             if (data.coordinate_link) formData.append('coordinate_link', data.coordinate_link);
 
-            // Valeurs numériques
             formData.append('build_area', data.build_area || 0);
             formData.append('field_area', data.field_area || 0);
             formData.append('basement_area', data.basement_area || 0);
@@ -112,45 +78,21 @@ const AddProperty = () => {
             formData.append('bathrooms', data.bathrooms || 0);
             formData.append('estimated_payment', data.estimated_payment || 0);
 
-            // Booléens
             formData.append('has_pool', data.has_pool ? "1" : "0");
             formData.append('has_garden', data.has_garden ? "1" : "0");
 
-            // Images principales
             if (data.images && data.images.length > 0) {
-                console.log('📸 Ajout de', data.images.length, 'images');
                 Array.from(data.images).forEach((file) => {
                     formData.append('images[]', file);
                 });
             }
 
-            // IDs des terrains proposés
-            if (data.proposed_product_ids && data.proposed_product_ids.length > 0) {
-                console.log('🏞️ Ajout de', data.proposed_product_ids.length, 'terrains');
-                data.proposed_product_ids.forEach((landId) => {
-                    formData.append('proposed_product_ids[]', landId);
-                });
-            }
-
-            console.log('=== 📤 DONNÉES À ENVOYER ===');
-            for (let [key, value] of formData.entries()) {
-                if (value instanceof File) {
-                    console.log(`${key}: [File] ${value.name} (${value.size} bytes)`);
-                } else {
-                    console.log(`${key}: ${value}`);
-                }
-            }
-
-            console.log('🌐 Appel de l\'API createProperty...');
-
             const response = await createProperty(formData);
-            console.log('✅ Réponse API:', response);
 
             toast.success("Propriété créée avec succès ! Vous pouvez maintenant ajouter les finances et parties (pour les immeubles).");
-            
+
             reset();
 
-            // Redirection vers la page de modification après 1 seconde
             setTimeout(() => {
                 if (response.data?.id) {
                     navigate(`/admin/properties/edit/${response.data.id}`);
@@ -160,13 +102,6 @@ const AddProperty = () => {
             }, 1000);
 
         } catch (error) {
-            console.error('❌ Erreur lors de la soumission:', error);
-            console.error('Détails de l\'erreur:', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status
-            });
-
             const errorMessage = error?.response?.data?.message || "Une erreur s'est produite lors de la création de la propriété";
             toast.error(errorMessage);
         } finally {
@@ -193,7 +128,7 @@ const AddProperty = () => {
                         Les finances et parties d'immeuble seront ajoutées après la création
                     </p>
                 </div>
-                
+
                 <div className='p-4 grid sm:grid-cols-2 xl:grid-cols-4 gap-4'>
                     <Input
                         error={errors.title?.message}
@@ -370,61 +305,6 @@ const AddProperty = () => {
                         label="Lien de vidéo (Google Maps)"
                         className='sm:col-span-2'
                         inputClassName='ring-0 dark:border-slate-600'
-                    />
-
-                    <Controller
-                        control={control}
-                        name="proposed_product_ids"
-                        render={({ field }) => (
-                            <div className='sm:col-span-2'>
-                                <label className="block text-sm font-medium mb-2 dark:text-white">
-                                    Terrains proposés
-                                </label>
-                                {loadingLands ? (
-                                    <div className="text-sm text-gray-500 dark:text-gray-400 p-3">
-                                        Chargement des terrains...
-                                    </div>
-                                ) : (
-                                    <div className="space-y-2 p-3 border rounded-lg dark:border-slate-600 max-h-48 overflow-y-auto">
-                                        {lands.length === 0 ? (
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                Aucun terrain disponible
-                                            </div>
-                                        ) : (
-                                            lands.map((land) => (
-                                                <label key={land.value} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-neutral-800 p-2 rounded">
-                                                    <input
-                                                        type="checkbox"
-                                                        value={land.value}
-                                                        checked={field.value?.includes(land.value) || false}
-                                                        onChange={(e) => {
-                                                            const value = e.target.value;
-                                                            const currentValues = field.value || [];
-                                                            if (e.target.checked) {
-                                                                field.onChange([...currentValues, value]);
-                                                            } else {
-                                                                field.onChange(currentValues.filter((v) => v !== value));
-                                                            }
-                                                        }}
-                                                        className="w-4 h-4 text-yellow-500 border-gray-300 dark:border-slate-600 rounded focus:ring-yellow-500"
-                                                    />
-                                                    <span className="text-sm dark:text-white">{land.label}</span>
-                                                </label>
-                                            ))
-                                        )}
-                                    </div>
-                                )}
-                                {field.value && field.value.length > 0 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => field.onChange([])}
-                                        className="mt-2 text-sm text-yellow-500 hover:text-yellow-600"
-                                    >
-                                        Tout désélectionner ({field.value.length} sélectionné{field.value.length > 1 ? 's' : ''})
-                                    </button>
-                                )}
-                            </div>
-                        )}
                     />
 
                     <FileInput
